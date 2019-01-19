@@ -10,19 +10,25 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capgemini.bankWebApp.account.entity.SavingsAccount;
 import com.capgemini.bankWebApp.account.service.SavingsAccountService;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 public class AccountResource {
 
 	@Autowired
 	private SavingsAccountService savingsService;
+	
+	/*
+	 * @Autowired private RestTemplate template;
+	 */
 	
 	@PostMapping
 	public void addSavingsAccount(@RequestBody SavingsAccount account) {
@@ -39,6 +45,33 @@ public class AccountResource {
 		}
 		 return new ResponseEntity<>(savingAccount, HttpStatus.OK);
 	}
+	
+	@GetMapping("{accountNumber}/balance")
+	public ResponseEntity<Double> getBalance(@PathVariable Integer accountNumber) {
+		
+		Optional<SavingsAccount> savingAccount = savingsService.getSavingAccountById(accountNumber);
+	
+		if(savingAccount == null) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		Double currentBalance = savingAccount.get().getCurrentBalance();
+		 return new ResponseEntity<>(currentBalance, HttpStatus.OK);
+	}
+	
+	@PutMapping("{accountNumber}")
+	public ResponseEntity<Double> updateBalance(@PathVariable Integer accountNumber, @RequestParam Double currentBalance) {
+		
+		Optional<SavingsAccount> savingAccount = savingsService.getSavingAccountById(accountNumber);
+		if(savingAccount == null) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		savingAccount.get().setCurrentBalance(currentBalance);
+		savingsService.addNewAccount(savingAccount.get());
+		
+		 return new ResponseEntity<>(currentBalance, HttpStatus.OK);
+	}
+	
 	
 	@GetMapping
 	public ResponseEntity<List<SavingsAccount>> getAllSavingsAccount() {

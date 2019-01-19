@@ -7,5 +7,5 @@ import com.capgemini.bankWebApp.account.entity.SavingsAccount;
 
 @Repository
 public interface SavingsRepository extends MongoRepository<SavingsAccount, Integer> {
-
+	
 }
