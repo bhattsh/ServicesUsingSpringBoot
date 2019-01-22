@@ -10,7 +10,7 @@
 </head>
 <body>
 <h1>${message}</h1>
-<form action="deposit" method="post">
+<form action="depositMoney" method="post">
 	Enter Account Number: <input name="accountNumber"/><br/>
 	Enter Amount : <input name="amount"/><br/>
 	<input type="submit"/>

@@ -68,8 +68,16 @@ public class BankAppController {
 	}
 	
 	@RequestMapping("/transferMoney")
-	public String transferMoney(@ModelAttribute Transaction transaction, Model model) {
+	public String transferMoney(@RequestParam int senderAccountNumber,@RequestParam int receiverAccountNumber, @RequestParam double amount ,Model model) {
+		Transaction transaction = new Transaction();
 		transaction.setTransactionType("withdraw");
+		transaction.setAccountNumber(senderAccountNumber);
+		transaction.setAmount(amount);
+		restTemplate.postForEntity("http://localhost:8998/transactions", transaction, null);
+		
+		transaction.setTransactionType("deposit");
+		transaction.setAccountNumber(receiverAccountNumber);
+		transaction.setAmount(amount);
 		restTemplate.postForEntity("http://localhost:8998/transactions", transaction, null);
 		
 		model.addAttribute("message","Success!");
